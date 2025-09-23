@@ -1,0 +1,21 @@
+############## REGISTER #################################
+post: http://localhost:8000/auth/register
+
+{
+  "name": "Tamine Kaim",
+  "email": "tamine@castelo.com",
+  "password": "123456",
+  "level": "professor",
+  "school": "castelo",
+  "tel": "55 99999 9999",
+   "address": "rua são lucas, TM"
+}
+
+##################### LOGIN #########################
+post: http://localhost:8000/auth/login
+
+FORM URL ENCODED
+
+username=tamine@castelo.com
+password=123456
+
