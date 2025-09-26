@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from src.models.teacher.tasks import Tarefa
 from src.schemas.teacher.tasks import TarefaBase, TarefaUpdate
+from src.models.user_model import User
 
 def listar_tarefas(db: Session, email: str):
     return db.query(Tarefa).filter(Tarefa.email == email).all()
@@ -20,8 +21,10 @@ def criar_tarefa(db: Session, tarefa: TarefaBase, email: str):
     db.refresh(nova_tarefa)
     return nova_tarefa
 
-def editar_tarefa(db: Session, tarefa_id: int, tarefa_update: TarefaUpdate):
-    tarefa = db.query(Tarefa).filter(Tarefa.id == tarefa_id).first()
+def editar_tarefa(db: Session, tarefa_id: int, tarefa_update: TarefaUpdate, teacher: User):
+    tarefa = db.query(Tarefa).filter(Tarefa.id == tarefa_id,
+                                     Tarefa.email == teacher.email
+                                     ).first()
     if not tarefa:
         return None
 

@@ -28,8 +28,11 @@ def criar(
     return tasks.criar_tarefa(db, tarefa, current_user.email)
 
 @router.put("/{tarefa_id}", response_model=TarefaOut)
-def editar(tarefa_id: int, tarefa_update: TarefaUpdate, db: Session = Depends(get_current_teacher)):
-    tarefa = tasks.editar_tarefa(db, tarefa_id, tarefa_update)
+def editar(tarefa_id: int, 
+           tarefa_update: TarefaUpdate, 
+           db: Session = Depends(get_db),
+           current_teacher: User = Depends(get_current_teacher)):
+    tarefa = tasks.editar_tarefa(db, tarefa_id, tarefa_update, current_teacher)
     if not tarefa:
         raise HTTPException(status_code=404, detail="Tarefa não encontrada")
     return tarefa

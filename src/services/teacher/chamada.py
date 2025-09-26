@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from src.models.teacher.chamada import Chamada, ChamadaAluno
-from src.schemas.teacher.chamada import ChamadaBase
+from src.schemas.teacher.chamada import ChamadaBase, ChamadaUpdate
 from src.core.security import get_current_user
 from src.models.user_model import User
 import json
@@ -32,27 +32,34 @@ def criar_chamada(db: Session, chamada_in: ChamadaBase, email: str):
     db.refresh(chamada)
     return chamada
 
-# def editar_tarefa(db: Session, tarefa_id: int, tarefa_update: TarefaUpdate):
-#     tarefa = db.query(Tarefa).filter(Tarefa.id == tarefa_id).first()
-#     if not tarefa:
-#         return None
+def editar_chamada(db: Session, chamada_id: int, chamada_update: ChamadaUpdate, teacher: User):
+    chamada = db.query(Chamada).filter(
+        Chamada.id == chamada_id,
+        Chamada.email == teacher.email  # garante que só edita a própria chamada
+    ).first()
 
-#     if tarefa_update.title is not None:
-#         tarefa.title = tarefa_update.title
-#     if tarefa_update.description is not None:
-#         tarefa.description = tarefa_update.description
-#     if tarefa_update.peso is not None:
-#         tarefa.peso = tarefa_update.peso
-#     if tarefa_update.data is not None:
-#         tarefa.data = tarefa_update.data
-#     if tarefa_update.disciplina is not None:
-#         tarefa.disciplina = tarefa_update.disciplina
-#     if tarefa_update.turma is not None:
-#         tarefa.turma = tarefa_update.turma
+    if not chamada:
+        return None
 
-#     db.commit()
-#     db.refresh(tarefa)
-#     return tarefa
+    # zera a lista antiga e adiciona de novo
+    chamada.alunos.clear()
+    for aluno in chamada_update.alunos:
+        chamada.alunos.append(
+            ChamadaAluno(
+                aluno_nome=aluno.aluno_nome,
+                status_horas=aluno.status_horas,
+            )
+        )
+
+    chamada.data = chamada_update.data
+    chamada.disciplina = chamada_update.disciplina
+    chamada.turma = chamada_update.turma
+    chamada.horas_aula = chamada_update.horas_aula
+
+    db.commit()
+    db.refresh(chamada)
+    return chamada
+
 
 # def excluir_tarefa(db: Session, tarefa_id: int):
 #     tarefa = db.query(Tarefa).filter(Tarefa.id == tarefa_id).first()
