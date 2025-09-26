@@ -61,10 +61,12 @@ def editar_chamada(db: Session, chamada_id: int, chamada_update: ChamadaUpdate, 
     return chamada
 
 
-# def excluir_tarefa(db: Session, tarefa_id: int):
-#     tarefa = db.query(Tarefa).filter(Tarefa.id == tarefa_id).first()
-#     if not tarefa:
-#         return None
-#     db.delete(tarefa)
-#     db.commit()
-#     return tarefa
+def excluir_chamada(db: Session, 
+                    chamada_id: int,
+                    teacher: User):
+    chamada = db.query(Chamada).filter(Chamada.id == chamada_id, Chamada.email == teacher.email).first()
+    if not chamada:
+        return None
+    db.delete(chamada)
+    db.commit()
+    return chamada

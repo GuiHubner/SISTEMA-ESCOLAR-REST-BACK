@@ -41,8 +41,9 @@ def editar(
 
 @router.delete("/{chamada_id}")
 def excluir(chamada_id: int, 
-            db: Session = Depends(get_current_teacher)):
-    chamada = excluir_chamada(db, chamada_id)
+            db: Session = Depends(get_db),
+            current_teacher: User = Depends(get_current_teacher)):
+    chamada = excluir_chamada(db, chamada_id, current_teacher)
     if not chamada:
         raise HTTPException(status_code=404, detail="Chamada não encontrada")
     return {"message": "Chamada excluída com sucesso"}
