@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text
 from src.database import Base
+from sqlalchemy.orm import relationship
 
 class Tarefa(Base):
     __tablename__ = "tarefas"
@@ -12,3 +13,5 @@ class Tarefa(Base):
     data = Column(String(100), nullable=False)
     disciplina = Column(String(100), nullable=False)
     turma = Column(String(100), nullable=True)
+
+    notas = relationship("Nota", back_populates="tarefa", cascade="all, delete") ####### apagar se der erro

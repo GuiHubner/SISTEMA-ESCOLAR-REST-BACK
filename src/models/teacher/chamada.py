@@ -19,6 +19,9 @@ class Chamada(Base):
     # relacionamento com chamada_aluno
     alunos = relationship("ChamadaAluno", back_populates="chamada", cascade="all, delete")
 
+    notas = relationship("Nota", back_populates="chamada") ####### apagar se der erro
+
+
     @validates("data")
     def set_ano(self, key, value):
         if value:
