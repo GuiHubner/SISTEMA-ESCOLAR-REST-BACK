@@ -137,33 +137,10 @@ def editar_nota(db: Session, tarefa_id: int, nota_update: NotaUpdate, email: str
 def excluir_nota(db: Session, 
                     nota_id: int,
                     teacher: User):
-    # tenta excluir por tarefa (grupo)
-    tarefa = db.query(Tarefa).filter(Tarefa.id == nota_id, Tarefa.email == teacher.email).first()
-    if tarefa:
-        rows = db.query(Nota).filter(Nota.tarefa_id == tarefa.id).all()
-        if not rows:
-            return None
-        for r in rows:
-            db.delete(r)
-        db.commit()
-        return True
-
-    # tenta excluir uma nota individual (verifica propriedade via tarefa ou chamada)
-    nota = db.query(Nota).filter(Nota.id == nota_id).first()
+    # rows = db.query(Nota).join(Tarefa).filter(Tarefa.email == teacher.email).all()
+    nota = db.query(Nota).filter(Nota.id == nota_id, Tarefa.email == teacher.email).first()
     if not nota:
         return None
-
-    # verifica dono pela tarefa relacionada
-    if getattr(nota, "tarefa", None) and getattr(nota.tarefa, "email", None) == teacher.email:
-        db.delete(nota)
-        db.commit()
-        return True
-
-    # verifica dono pela chamada relacionada
-    if getattr(nota, "chamada", None) and getattr(nota.chamada, "email", None) == teacher.email:
-        db.delete(nota)
-        db.commit()
-        return True
-
-    # sem permissão / não pertence ao professor
-    return None
+    db.delete(nota)
+    db.commit()
+    return nota
