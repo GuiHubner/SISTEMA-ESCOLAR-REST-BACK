@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from src.database import Base, engine
 from src.routes.teacher import tasks, chamada, notas
+from src.routes.alunos import infos
 
 from fastapi import FastAPI
 from src.database import Base, engine
@@ -16,6 +17,7 @@ app.include_router(auth.router)
 app.include_router(tasks.router)
 app.include_router(chamada.router)
 app.include_router(notas.router)
+app.include_router(infos.router)
 
 import uvicorn
 
